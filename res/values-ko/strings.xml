@@ -570,7 +570,7 @@
     <string name="t9_sort_name">일치하는 이름부터 보여줍니다</string>
     <string name="t9_sort_number">일치하는 번호부터 보여줍니다</string>
     <string name="t9_state_title">T9 다이얼러 사용</string>
-    <string name="t9_state_summary">초성 검색을 활성화 합니다</string>
+    <string name="t9_state_summary">초성 검색은 안됩니다. 필요 도움! 능력자의</string>
     <string name="t9_dial_click_title">선택된 연락처로 전화</string>
     <string name="t9_dial_click_summary">선택된 연락처로 전화를 겁니다</string>
     <string name="t9_add_to_contacts">연락처에 추가</string>
