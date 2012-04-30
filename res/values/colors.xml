@@ -53,7 +53,7 @@
     <color name="voicemail_playback_ui_text">#ccafafaf</color>
 
     <!-- Color of the theme of the People app -->
-    <color name="people_app_theme_color">#8c00ff</color>
+    <color name="people_app_theme_color">#33B5E5</color>
 
     <!-- Secondary text color in the Phone app -->
     <color name="dialtacts_secondary_text_color">#CFCFCF</color>
