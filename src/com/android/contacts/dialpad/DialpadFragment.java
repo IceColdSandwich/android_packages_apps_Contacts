@@ -276,7 +276,6 @@ public class DialpadFragment extends Fragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedState) {
-        View fragmentView = inflater.inflate(R.layout.dialpad_fragment, container, false);
 
         // Load up the resources for the text field.
         Resources r = getResources();
