@@ -222,10 +222,12 @@ public class ContactInfoHelper {
 	 Assuming the most recent callLog entry for the phone number has the most up to date info
 	*/
         Uri uri = Uri.withAppendedPath(CallLog.Calls.CONTENT_FILTER_URI, Uri.encode(contactNumber));
+        //if we ought to find something it would be in incmoning calls
+        String selectionClause = " " + CallLog.Calls.TYPE + " = " + CallLog.Calls.INCOMING_TYPE;
         Cursor c = mContext.getContentResolver().query(
                 uri,
                 CallLogQuery._PROJECTION,
-                null,
+                selectionClause,
                 null,
                 Calls.DEFAULT_SORT_ORDER + " LIMIT 1");
 
