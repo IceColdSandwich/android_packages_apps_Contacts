@@ -21,6 +21,11 @@
         android:title="@string/menu_editGroup"
         android:alphabeticShortcut="e" />
 
+     <item
+        android:id="@+id/menu_set_ringtone"
+        android:icon="@drawable/ic_menu_mark"
+        android:title="@string/menu_set_ring_tone" />
+
     <item
         android:id="@+id/menu_delete_group"
         android:icon="@drawable/ic_menu_trash_holo_light"

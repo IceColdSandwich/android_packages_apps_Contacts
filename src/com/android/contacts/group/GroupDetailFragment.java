@@ -53,6 +53,11 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.media.RingtoneManager;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 
 /**
  * Displays the details of a group and shows a list of actions possible for the group.
@@ -87,9 +92,11 @@ public class GroupDetailFragment extends Fragment implements OnScrollListener {
     }
 
     private static final String TAG = "GroupDetailFragment";
+    private static final String GROUP_RINGTONE_FILENAME = "group_ringtone_file.txt";
 
     private static final int LOADER_METADATA = 0;
     private static final int LOADER_MEMBERS = 1;
+    private static final int REQUEST_CODE_PICK_RINGTONE = 1;
 
     private Context mContext;
 
@@ -118,6 +125,7 @@ public class GroupDetailFragment extends Fragment implements OnScrollListener {
     private boolean mOptionsMenuGroupDeletable;
     private boolean mOptionsMenuGroupPresent;
     private boolean mCloseActivityAfterDelete;
+    private String mCustomRingtone;
 
     public GroupDetailFragment() {
     }
@@ -274,6 +282,7 @@ public class GroupDetailFragment extends Fragment implements OnScrollListener {
             mGroupId = cursor.getLong(GroupMetaDataLoader.GROUP_ID);
             mGroupName = cursor.getString(GroupMetaDataLoader.TITLE);
             mIsReadOnly = cursor.getInt(GroupMetaDataLoader.IS_READ_ONLY) == 1;
+            mCustomRingtone = getGroupCustomRingtone(mGroupId);
             updateTitle(mGroupName);
             // Must call invalidate so that the option menu will get updated
             getActivity().invalidateOptionsMenu ();
@@ -410,6 +419,11 @@ public class GroupDetailFragment extends Fragment implements OnScrollListener {
 
         final MenuItem deleteMenu = menu.findItem(R.id.menu_delete_group);
         deleteMenu.setVisible(mOptionsMenuGroupDeletable);
+
+	final MenuItem optionsRingtone = menu.findItem(R.id.menu_set_ringtone);
+        if (optionsRingtone != null) {
+            optionsRingtone.setVisible(mOptionsMenuGroupPresent);
+        }
     }
 
     @Override
@@ -424,6 +438,10 @@ public class GroupDetailFragment extends Fragment implements OnScrollListener {
                         mCloseActivityAfterDelete);
                 return true;
             }
+	    case R.id.menu_set_ringtone: {
+                doPickRingtone();
+                return true;
+            }
         }
         return false;
     }
@@ -434,5 +452,130 @@ public class GroupDetailFragment extends Fragment implements OnScrollListener {
 
     public long getGroupId() {
         return mGroupId;
+    }
+
+    private void doPickRingtone() {
+
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        // Allow user to pick 'Default'
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+        // Show only ringtones
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
+        // Don't show 'Silent'
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+
+        Uri ringtoneUri;
+        if (mCustomRingtone != null) {
+            ringtoneUri = Uri.parse(mCustomRingtone);
+        } else {
+            // Otherwise pick default ringtone Uri so that something is selected.
+            ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        }
+
+        // Put checkmark next to the current ringtone for this contact
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, ringtoneUri);
+
+        // Launch!
+        startActivityForResult(intent, REQUEST_CODE_PICK_RINGTONE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        switch (requestCode) {
+            case REQUEST_CODE_PICK_RINGTONE: {
+                Uri pickedUri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                handleRingtonePicked(pickedUri);
+                break;
+            }
+        }
+    }
+
+    private void handleRingtonePicked(Uri pickedUri) {
+        if (pickedUri == null || RingtoneManager.isDefault(pickedUri)) {
+            mCustomRingtone = null;
+        } else {
+            mCustomRingtone = pickedUri.toString();
+        }
+        // write file with custom ringtones
+        setGroupCustomRingtone(mGroupId);
+    }
+
+    public String getGroupCustomRingtone(long group_id) {
+	// TODO read file and return custom ringtone for this group
+	try
+	{
+		FileInputStream fis = mContext.openFileInput(GROUP_RINGTONE_FILENAME);
+		StringBuffer fileContent = new StringBuffer("");
+
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = fis.read(buffer)) != -1) {
+		    fileContent.append(new String(buffer).replace("\n","#"));
+		}
+		fis.close();
+		if(group_id==-99) return fileContent.toString().trim();
+		else
+		{
+		    String splitted[]=fileContent.toString().trim().split("#");
+		    String Ringtone="";
+		    for(int i=0; i<splitted.length; i++)
+		    {
+		        String vals[]=splitted[i].split("-");
+    		    if(vals[0].compareTo(String.format("GROUP_%d",group_id))==0) {Ringtone=vals[1];break;}
+		    }
+		    return Ringtone;
+		}
+	}
+	catch (FileNotFoundException e) {
+        return "";
+
+	    } catch (IOException e) {
+		return "";
+
+	    }
+    }
+    
+    public void setGroupCustomRingtone(long group_id) {
+    // TODO read file and return custom ringtone for this group
+        String File_Cont=getGroupCustomRingtone(-99);
+        String Curr_Tone=String.format("GROUP_%d-%s#", group_id,mCustomRingtone);
+        StringBuffer file=new StringBuffer("");
+        if(File_Cont!="")
+        {
+            String splitted[]=File_Cont.toString().trim().split("#");
+            StringBuffer outbuffer=new StringBuffer("");
+            for(int i=0; i<splitted.length; i++)
+            {
+                String vals[]=splitted[i].split("-");
+                if(vals[0].compareTo(String.format("GROUP_%d",group_id))==0)
+                {
+                    splitted[i]="";
+                    if(mCustomRingtone!=null) splitted[i]=Curr_Tone.substring(0,Curr_Tone.length()-1);
+                    Curr_Tone="";
+                }
+                outbuffer.append(splitted[i]);
+                if(splitted[i].isEmpty()==false) outbuffer.append("#");
+            }
+            File_Cont="";
+            File_Cont=outbuffer.toString();
+        }
+        file.append(File_Cont);
+        file.append(Curr_Tone);
+    try
+    {
+        FileOutputStream fos = mContext.openFileOutput(GROUP_RINGTONE_FILENAME, Context.MODE_WORLD_READABLE); //openFileOutput underlined red
+        try {
+          fos.write(file.toString().trim().replace("#","\n").getBytes());
+          fos.close();
+        } catch (IOException e) {
+          return;
+        }
+    }catch (IOException e) {
+        return;
+      }
     }
 }

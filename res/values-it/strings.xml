@@ -53,6 +53,7 @@
     <string name="menu_deleteGroup" msgid="3486380004411482874">"Elimina"</string>
     <string name="menu_new_contact_action_bar" msgid="8887818026717394343">"Nuovo"</string>
     <string name="menu_new_group_action_bar" msgid="5055346725617932394">"Nuovo"</string>
+    <string name="menu_letters_action_bar">Lettere</string>
     <string name="splitConfirmation_title" msgid="633640935430370530">"Separare contatto?"</string>
     <string name="splitConfirmation" msgid="740190210499587175">"Questo contatto verrà diviso in più contatti."</string>
     <string name="menu_joinAggregate" msgid="5027981918265667970">"Unisci"</string>
@@ -411,6 +412,12 @@
     <string name="display_options_view_names_as" msgid="18022868169627979">"Visualizza nomi contatti con"</string>
     <string name="display_options_view_given_name_first" msgid="6968288511197363292">"Prima il nome"</string>
     <string name="display_options_view_family_name_first" msgid="1447288164951453714">"Prima il cognome"</string>
+    <!-- Label of the "list view display mode" contact display option -->
+    <string name="display_options_view_mode">Modo visualizzazione lista</string>
+    <!-- An allowable value for the "list view display mode" contact display option  -->
+    <string name="display_options_view_mode_standard">Vis. Standard</string>
+    <!-- An allowable value for the "list view display mode" contact display option  -->
+    <string name="display_options_view_mode_compact">Vis. Compatta</string>
     <string name="search_bar_hint" msgid="1012756309632856553">"Cerca contatti"</string>
     <string name="take_photo" msgid="7496128293167402354">"Scatta foto"</string>
     <string name="take_new_photo" msgid="7341354729436576304">"Scatta nuova foto"</string>
