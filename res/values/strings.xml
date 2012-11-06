@@ -155,6 +155,9 @@
     <!-- Menu item (in the action bar) that creates a new group [CHAR LIMIT=12] -->
     <string name="menu_new_group_action_bar">New</string>
 
+    <!-- Menu item (in the action bar) that shows the alphabet grid [CHAR LIMIT=12] -->
+    <string name="menu_letters_action_bar">Letters</string>
+
     <!-- Title of the confirmation dialog for separating contacts into multiple instances [CHAR LIMIT=26] -->
     <string name="splitConfirmation_title">Separate contact?</string>
 

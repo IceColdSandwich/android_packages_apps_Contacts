@@ -55,4 +55,10 @@
         android:icon="@drawable/ic_menu_settings_holo_light"
         android:orderInCategory="4"
         android:title="@string/menu_settings" />
+    
+    <item
+        android:id="@+id/menu_letters"
+        android:icon="@drawable/ic_letters_holo_dark"
+        android:title="@string/menu_letters_action_bar"
+        android:showAsAction="always" />
 </menu>

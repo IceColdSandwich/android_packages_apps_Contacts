@@ -390,6 +390,11 @@
             </intent-filter>
         </activity>
 
+	<!-- Views the grid with letters -->
+        <activity android:name=".activities.LettersGridActivity"
+            android:label=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
         <!-- List of groups -->
         <activity android:name=".activities.GroupBrowserActivity"
             android:label="@string/contactsGroupsLabel"
@@ -558,7 +563,6 @@
                 <data android:mimeType="image/*" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            />
         </activity>
 
         <!-- Interstitial activity that shows a phone disambig dialog -->

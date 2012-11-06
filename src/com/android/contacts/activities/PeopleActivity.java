@@ -22,6 +22,7 @@ import com.android.contacts.ContactsActivity;
 import com.android.contacts.ContactsUtils;
 import com.android.contacts.R;
 import com.android.contacts.activities.ActionBarAdapter.TabState;
+import com.android.contacts.activities.LettersGridActivity;
 import com.android.contacts.detail.ContactDetailFragment;
 import com.android.contacts.detail.ContactDetailLayoutController;
 import com.android.contacts.detail.ContactDetailUpdatesFragment;
@@ -61,6 +62,7 @@ import com.android.contacts.util.AccountsListAdapter.AccountListFilter;
 import com.android.contacts.util.Constants;
 import com.android.contacts.util.DialogManager;
 import com.android.contacts.util.PhoneCapabilityTester;
+import com.android.contacts.widget.IndexerListAdapter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -95,7 +97,9 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListPopupWindow;
+import android.widget.SectionIndexer;
 import android.widget.Toast;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +124,7 @@ public class PeopleActivity extends ContactsActivity
     private static final int SUBACTIVITY_NEW_GROUP = 4;
     private static final int SUBACTIVITY_EDIT_GROUP = 5;
     private static final int SUBACTIVITY_ACCOUNT_FILTER = 6;
+    private static final int SUBACTIVITY_LETTERS = 7;
 
     private final DialogManager mDialogManager = new DialogManager(this);
 
@@ -1348,6 +1353,7 @@ public class PeopleActivity extends ContactsActivity
 
         final MenuItem addContactMenu = menu.findItem(R.id.menu_add_contact);
         final MenuItem contactsFilterMenu = menu.findItem(R.id.menu_contacts_filter);
+        final MenuItem LettersMenu = menu.findItem(R.id.menu_letters);
 
         MenuItem addGroupMenu = menu.findItem(R.id.menu_add_group);
         if (addGroupMenu == null) {
@@ -1359,17 +1365,20 @@ public class PeopleActivity extends ContactsActivity
             addContactMenu.setVisible(false);
             addGroupMenu.setVisible(false);
             contactsFilterMenu.setVisible(false);
+            LettersMenu.setVisible(false);
         } else {
             switch (mActionBarAdapter.getCurrentTab()) {
                 case FAVORITES:
                     addContactMenu.setVisible(false);
                     addGroupMenu.setVisible(false);
                     contactsFilterMenu.setVisible(false);
+                    LettersMenu.setVisible(false);
                     break;
                 case ALL:
                     addContactMenu.setVisible(true);
                     addGroupMenu.setVisible(false);
                     contactsFilterMenu.setVisible(true);
+                    LettersMenu.setVisible(true);
                     break;
                 case GROUPS:
                     // Do not display the "new group" button if no accounts are available
@@ -1380,6 +1389,7 @@ public class PeopleActivity extends ContactsActivity
                     }
                     addContactMenu.setVisible(false);
                     contactsFilterMenu.setVisible(false);
+                    LettersMenu.setVisible(false);
                     break;
             }
         }
@@ -1471,6 +1481,18 @@ public class PeopleActivity extends ContactsActivity
                 startActivity(intent);
                 return true;
             }
+            case R.id.menu_letters: {
+                String[] title = (String[])mAllFragment.getAdapter().getSections();
+                String letters="";
+                for(int i=1;i<title.length;i++)
+                {
+                    letters+=title[i];
+                }
+                final Intent intent = new Intent(this, LettersGridActivity.class);
+                intent.putExtra("letters", letters);
+                startActivityForResult(intent,SUBACTIVITY_LETTERS);
+                return true;
+            }
         }
         return false;
     }
@@ -1520,6 +1542,15 @@ public class PeopleActivity extends ContactsActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+	    case SUBACTIVITY_LETTERS: {
+		if (resultCode == RESULT_OK) {
+			String result_letter = data.getStringExtra("result");
+			int letter_pos=mAllFragment.getAdapter().getPositionForSection((Integer.valueOf(result_letter)+1));
+			ListView lv = mAllFragment.getListView();
+			lv.setSelection(letter_pos+4);
+		}
+                break;
+            }
             case SUBACTIVITY_ACCOUNT_FILTER: {
                 AccountFilterUtil.handleAccountFilterResult(
                         mContactListFilterController, resultCode, data);
